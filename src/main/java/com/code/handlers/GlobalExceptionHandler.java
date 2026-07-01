@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -28,6 +29,14 @@ public class GlobalExceptionHandler {
         result.setStatus(HttpStatus.BAD_REQUEST.value());
         result.setMessage("Yêu cầu không hợp lệ. Vui lòng kiểm tra dữ liệu gửi lên");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseMap> handleValidationFailed(MethodArgumentNotValidException exception) {
+        ResponseMap result = new ResponseMap();
+        result.setStatus(HttpStatus.BAD_REQUEST.value());
+        result.setMessage("Dữ liệu không hợp lệ. Vui lòng kiểm tra lại");
+        return ResponseEntity.badRequest().body(result);
     }
 
 }

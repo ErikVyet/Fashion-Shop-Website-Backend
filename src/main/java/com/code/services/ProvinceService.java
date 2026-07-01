@@ -12,7 +12,7 @@ import com.code.repositories.ProvinceRepository;
 @Service
 public class ProvinceService {
 
-    protected ProvinceRepository provinceRepository;
+    protected final ProvinceRepository provinceRepository;
 
     public ProvinceService(ProvinceRepository provinceRepository) {
         this.provinceRepository = provinceRepository;
