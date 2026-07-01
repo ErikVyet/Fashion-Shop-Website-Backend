@@ -1,0 +1,9 @@
+{
+    "properties": [
+        {
+            "name": "app.api.key",
+            "type": "java.lang.String",
+            "description": "Backend's API key"
+        }
+    ] 
+}

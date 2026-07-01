@@ -27,7 +27,7 @@ public class Category {
     private int id;
 
     @JdbcTypeCode(SqlTypes.INTEGER)
-    @Column(name = "order", nullable = false)
+    @Column(name = "priority", nullable = false)
     private int order;
 
     @JdbcTypeCode(SqlTypes.VARCHAR)

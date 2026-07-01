@@ -48,10 +48,10 @@ public class User {
     private String fullname;
 
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(name = "phone", length = 15)
+    @Column(name = "phone", length = 15, nullable = true)
     private String phone;
 
-    @Column(name = "avatar_url", columnDefinition = "text")
+    @Column(name = "avatar_url", columnDefinition = "text", nullable = true)
     private String avatar;
 
     @Enumerated(EnumType.ORDINAL)

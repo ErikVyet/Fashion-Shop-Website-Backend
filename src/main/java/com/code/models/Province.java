@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,7 +29,7 @@ public class Province {
     @Column(name = "is_active", nullable = false)
     private boolean active;
 
-    @OneToMany(mappedBy = "province", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "province", fetch = FetchType.LAZY)
     private List<Ward> wards;
 
     @OneToMany(mappedBy = "province", fetch = FetchType.LAZY)
