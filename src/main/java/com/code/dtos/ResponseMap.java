@@ -1,6 +1,7 @@
 package com.code.dtos;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class ResponseMap implements Serializable {
 
@@ -8,15 +9,10 @@ public class ResponseMap implements Serializable {
 
     private Integer status;
     private String message;
+    private Map<String, String> errorFields;
     private Object data;
 
     public ResponseMap() { }
-
-    public ResponseMap(Integer status, String message, Object data) {
-        this.status = status;
-        this.message = message;
-        this.data = data;
-    }
 
     public Integer getStatus() {
         return status;
@@ -40,6 +36,14 @@ public class ResponseMap implements Serializable {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public Map<String, String> getErrorFields() {
+        return errorFields;
+    }
+
+    public void setErrorFields(Map<String, String> errorFields) {
+        this.errorFields = errorFields;
     }
 
 }

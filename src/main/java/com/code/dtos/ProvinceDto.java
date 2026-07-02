@@ -2,15 +2,27 @@ package com.code.dtos;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.code.models.Province;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class ProvinceDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @NotBlank(message = "Mã tỉnh thành không được để trống")
+    @Length(max = 10, message = "Mã tỉnh thành không được vượt quá 10 ký tự")
     private String code;
+
+    @NotBlank(message = "Tên tỉnh thành không được để trống")
+    @Length(max = 255, message = "Tên tỉnh thành không được vượt quá 255 ký tự")
     private String name;
-    private boolean is_active;
+
+    @NotNull(message = "Trạng thái của tỉnh thành không được để trống")
+    private Boolean is_active;
     
     public ProvinceDto() { }
 
@@ -36,11 +48,11 @@ public class ProvinceDto implements Serializable {
         this.name = name;
     }
 
-    public boolean isIs_active() {
+    public Boolean isIs_active() {
         return is_active;
     }
 
-    public void setIs_active(boolean is_active) {
+    public void setIs_active(Boolean is_active) {
         this.is_active = is_active;
     }
 

@@ -78,6 +78,7 @@ public class ProvinceService {
         }
     }
 
+    @Transactional
     public boolean updateProvinceActive(String code, boolean active) {
         try {
             Province province = this.provinceRepository.findById(code).get();

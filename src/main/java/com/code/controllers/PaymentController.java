@@ -1,6 +1,5 @@
 package com.code.controllers;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,26 +16,28 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.code.dtos.ProvinceDto;
+import com.code.dtos.PaymentDto;
 import com.code.dtos.ResponseMap;
-import com.code.services.ProvinceService;
+import com.code.services.PaymentService;
+
+import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/fazhion/api/v1/province")
+@RequestMapping("/fazhion/api/v1/payment")
 @CrossOrigin(origins = "http://localhost:5173")
-public class ProvinceController {
+public class PaymentController {
 
-    protected final ProvinceService provinceService;
+    protected final PaymentService paymentService;
 
     @Value("${app.api.key}")
     protected String key;
 
-    public ProvinceController(ProvinceService provinceService) {
-        this.provinceService = provinceService;
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<ResponseMap> getProvinces(@RequestHeader("key") String apiKey) {
+    public ResponseEntity<ResponseMap> readPayments(@RequestHeader("key") String apiKey) {
         ResponseMap result = new ResponseMap();
         if (key.isBlank() || key == null) {
             result.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -49,14 +50,13 @@ public class ProvinceController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
         }
 
-        List<ProvinceDto> provinces = this.provinceService.readProvinces();
         result.setStatus(HttpStatus.OK.value());
-        result.setData(provinces);
+        result.setData(this.paymentService.readPayments());;
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{provinceCode}")
-    public ResponseEntity<ResponseMap> findProvince(@RequestHeader("key") String apiKey, @PathVariable String provinceCode) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseMap> findPayment(@RequestHeader("key") String apiKey, @PathVariable int id) {
         ResponseMap result = new ResponseMap();
         if (key.isBlank() || key == null) {
             result.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -69,21 +69,21 @@ public class ProvinceController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
         }
 
-        ProvinceDto provinceDto = this.provinceService.getProvince(provinceCode);
-        if (provinceDto == null) {
-            result.setStatus(HttpStatus.NOT_FOUND.value());
-            result.setMessage("Không tìm thấy tỉnh thành");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        PaymentDto paymentDto = this.paymentService.getPayment(id);
+        if (paymentDto != null) {
+            result.setStatus(HttpStatus.OK.value());
+            result.setData(paymentDto);
+            return ResponseEntity.ok(result);
         }
         else {
-            result.setStatus(HttpStatus.OK.value());
-            result.setData(provinceDto);
-            return ResponseEntity.ok(result);
+            result.setStatus(HttpStatus.NOT_FOUND.value());
+            result.setMessage("Không tìm thấy phương thức thanh toán");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseMap> insertProvince(@RequestHeader("key") String apiKey, @RequestBody ProvinceDto provinceDto) {
+    public ResponseEntity<ResponseMap> createPayment(@RequestHeader("key") String apiKey, @RequestBody @Valid PaymentDto paymentDto) {
         ResponseMap result = new ResponseMap();
         if (key.isBlank() || key == null) {
             result.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -96,21 +96,21 @@ public class ProvinceController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
         }
 
-        if (this.provinceService.createProvince(provinceDto)) {
+        if (this.paymentService.createPayment(paymentDto)) {
             result.setStatus(HttpStatus.CREATED.value());
-            result.setMessage("Thêm dữ liệu thành công");
+            result.setMessage("Tạo phương thức thanh toán thành công");
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }
         else {
             result.setStatus(HttpStatus.BAD_REQUEST.value());
-            result.setMessage("Đã xảy ra lỗi khi thêm dữ liệu");
-            result.setErrorFields(Map.of("code", "Mã tỉnh thành đã tồn tại"));
+            result.setMessage("Tạo phương thức thanh toán thất bại");
+            result.setErrorFields(Map.of("id", "Mã phương thức thanh toán bị trùng"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
         }
     }
 
-    @DeleteMapping("/delete/{provinceCode}")
-    public ResponseEntity<ResponseMap> removeProvince(@RequestHeader("key") String apiKey, @PathVariable String provinceCode) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseMap> deletePayment(@RequestHeader("key") String apiKey, @PathVariable int id) {
         ResponseMap result = new ResponseMap();
         if (key.isBlank() || key == null) {
             result.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -123,20 +123,20 @@ public class ProvinceController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
         }
 
-        if (this.provinceService.deleteProvince(provinceCode)) {
+        if (this.paymentService.deletePayment(id)) {
             result.setStatus(HttpStatus.OK.value());
-            result.setMessage("Xóa dữ liệu thành công");
+            result.setMessage("Thành công xóa phương thức thanh toán");
             return ResponseEntity.ok(result);
         }
         else {
             result.setStatus(HttpStatus.NOT_FOUND.value());
-            result.setMessage("Không tìm thấy dữ liệu để xóa");
+            result.setMessage("Không tìm thấy phương thức thanh toán");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<ResponseMap> updateProvince(@RequestHeader("key") String apiKey, @RequestBody ProvinceDto provinceDto) {
+    public ResponseEntity<ResponseMap> updatePayment(@RequestHeader("key") String apiKey, @RequestBody @Valid PaymentDto paymentDto) {
         ResponseMap result = new ResponseMap();
         if (key.isBlank() || key == null) {
             result.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -149,20 +149,20 @@ public class ProvinceController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
         }
 
-        if (this.provinceService.updateProvince(provinceDto)) {
+        if (this.paymentService.updatePayment(paymentDto)) {
             result.setStatus(HttpStatus.OK.value());
-            result.setMessage("Cập nhật dữ liệu thành công");
+            result.setMessage("Thành công cập nhật phương thức thanh toán");
             return ResponseEntity.ok(result);
         }
         else {
             result.setStatus(HttpStatus.NOT_FOUND.value());
-            result.setMessage("Không tìm thấy dữ liệu để cập nhật");
+            result.setMessage("Không tìm thấy phương thức thanh toán");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
     }
 
-    @PatchMapping("/update-visibility")
-    public ResponseEntity<ResponseMap> updateProvinceVisibility(@RequestHeader("key") String apiKey, @RequestBody ProvinceDto data) {
+    @PatchMapping("/update-active")
+    public ResponseEntity<ResponseMap> updatePaymentActive(@RequestHeader("key") String apiKey, @RequestBody PaymentDto paymentDto) {
         ResponseMap result = new ResponseMap();
         if (key.isBlank() || key == null) {
             result.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -175,14 +175,14 @@ public class ProvinceController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
         }
 
-        if (this.provinceService.updateProvinceActive(data.getCode(), data.isIs_active())) {
+        if (this.paymentService.updatePaymentActive(paymentDto.getId(), paymentDto.isIs_active())) {
             result.setStatus(HttpStatus.OK.value());
-            result.setMessage("Cập nhật dữ liệu thành công");
+            result.setMessage("Thành công cập nhật trạng thái phương thức thanh toán");
             return ResponseEntity.ok(result);
         }
         else {
             result.setStatus(HttpStatus.NOT_FOUND.value());
-            result.setMessage("Không tìm thấy dữ liệu để cập nhật");
+            result.setMessage("Không tìm thấy phương thức thanh toán");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
     }

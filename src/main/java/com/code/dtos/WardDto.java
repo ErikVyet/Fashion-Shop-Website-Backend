@@ -4,24 +4,23 @@ import org.hibernate.validator.constraints.Length;
 
 import com.code.models.Ward;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class WardDto {
 
-    @NotBlank
-    @Length(max = 10)
+    @NotBlank(message = "Mã phường không được để trống")
+    @Length(max = 10, message = "Mã phường không được vượt quá 10 ký tự")
     private String code;
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "Tên phường không được để trống")
+    @Length(max = 255, message = "Tên phường không được vượt quá 255 ký tự")
     private String name;
 
-    @NotNull
-    private boolean is_active;
+    @NotNull(message = "Trạng thái của phường không được để trống")
+    private Boolean is_active;
 
-    @Nullable
+    @NotNull(message = "Tỉnh thành của phường không được để trống")
     private ProvinceDto province;
 
     public WardDto() { }
@@ -42,11 +41,11 @@ public class WardDto {
         this.name = name;
     }
 
-    public boolean isIs_active() {
+    public Boolean isIs_active() {
         return is_active;
     }
 
-    public void setIs_active(boolean is_active) {
+    public void setIs_active(Boolean is_active) {
         this.is_active = is_active;
     }
 

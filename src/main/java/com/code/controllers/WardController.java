@@ -1,6 +1,7 @@
 package com.code.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -98,14 +99,15 @@ public class WardController {
         }
 
         if (this.wardService.createWard(wardDto)) {
-            result.setStatus(HttpStatus.OK.value());
+            result.setStatus(HttpStatus.CREATED.value());
             result.setMessage("Thành công thêm thông tin phường mới.");
-            return ResponseEntity.ok(result);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }
         else {
-            result.setStatus(HttpStatus.NOT_FOUND.value());
+            result.setStatus(HttpStatus.BAD_REQUEST.value());
             result.setMessage("Thông tin phường không hợp lệ. Vui lòng kiểm tra lại.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+            result.setErrorFields(Map.of("code", "Mã phường đã tồn tại"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
         }
     }
 
